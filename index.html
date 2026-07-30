@@ -58,8 +58,9 @@
         /* Checkout Form */
         .checkout-form { display: flex; flex-direction: column; gap: 15px; }
         .checkout-form input { padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; }
-        .checkout-form button { width: 100%; background-color: #2ed573; }
+        .checkout-form button { width: 100%; background-color: #2ed573; color: white; font-weight: bold; padding: 12px; border: none; border-radius: 5px; cursor: pointer; }
         .checkout-form button:hover { background-color: #26b360; }
+        .checkout-form button:disabled { background-color: #888; cursor: not-allowed; }
 
         /* === WHATSAPP FLOATING BUTTON === */
         .whatsapp-float { position: fixed; width: 60px; height: 60px; bottom: 30px; right: 30px; background-color: #25d366; color: #FFF; border-radius: 50px; text-align: center; font-size: 30px; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); z-index: 100; display: flex; justify-content: center; align-items: center; text-decoration: none; transition: transform 0.3s ease; }
@@ -112,7 +113,7 @@
             <form class="checkout-form" id="order-form">
                 <input type="text" id="customer_name" placeholder="Full Name" required>
                 <input type="tel" id="customer_phone" placeholder="Phone Number" required>
-                <button type="submit" class="btn" id="submit-btn">Send Order</button>
+                <button type="submit" id="submit-btn">Send Order</button>
             </form>
         </div>
     </div>
@@ -125,7 +126,7 @@
     <!-- JavaScript Logic -->
     <script>
         // =========================================================================
-        // YOUR EMAILJS KEYS ARE NOW FULLY CONFIGURED
+        // AAPKI EMAILJS KEYS YAHAN HAIN
         // =========================================================================
         
         const EMAILJS_PUBLIC_KEY = "CyhhOXiY2P0zEUOKg"; 
@@ -237,19 +238,22 @@
             submitBtn.textContent = 'Sending...';
             submitBtn.disabled = true;
 
+            // Prepare Order Text
             let orderList = cart.map(item => `- ${item.name} (₹${item.price})`).join('\n');
             let grandTotal = cart.reduce((sum, item) => sum + item.price, 0);
+            
             const name = document.getElementById('customer_name').value;
             const phone = document.getElementById('customer_phone').value;
 
+            // Mapping variables to send to EmailJS Template
             const templateParams = {
-                to_email: 'animesf000@gmail.com', 
                 customer_name: name,
                 customer_phone: phone,
                 order_details: orderList,
                 total_price: `₹${grandTotal}`
             };
 
+            // Send via EmailJS
             emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
                 .then(function(response) {
                     alert('Order Sent Successfully! We will contact you soon.');
@@ -273,4 +277,3 @@
     </script>
 </body>
 </html>
-
