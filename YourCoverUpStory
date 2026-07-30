@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YourCoverUpStory | Fresh Finds, Best Prices</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- EmailJS CDN -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <style>
+        /* === CSS RESET & BASE STYLES === */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background-color: #f8f9fa; color: #333; }
+
+        /* === NAVBAR === */
+        header { background-color: #ffffff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .logo { font-size: 24px; font-weight: 700; color: #111; text-decoration: none; }
+        .cart-icon-container { position: relative; cursor: pointer; font-size: 24px; }
+        .cart-badge { position: absolute; top: -5px; right: -10px; background-color: #ff4757; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; font-weight: bold; }
+
+        /* === HERO SECTION === */
+        .hero { height: 80vh; background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://i.ibb.co/zVSY1FWs/Screenshot-20260730-022035.jpg') center/cover no-repeat; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white; padding: 0 20px; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+        .hero p { font-size: 1.2rem; margin-bottom: 30px; font-weight: 300; }
+        .btn { padding: 12px 30px; background-color: #ff4757; color: white; text-decoration: none; border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background 0.3s ease; }
+        .btn:hover { background-color: #ff6b81; }
+
+        /* === PRODUCTS SECTION === */
+        #products { padding: 60px 5%; max-width: 1200px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: 2rem; margin-bottom: 40px; }
+        .carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding-bottom: 20px; -ms-overflow-style: none; scrollbar-width: none; }
+        .carousel::-webkit-scrollbar { display: none; }
+        .product-card { min-width: 280px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); scroll-snap-align: start; flex: 0 0 auto; display: flex; flex-direction: column; }
+        .product-img { width: 100%; height: 350px; object-fit: cover; }
+        .product-info { padding: 20px; text-align: center; display: flex; flex-direction: column; flex-grow: 1; }
+        .product-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; }
+        .product-price { font-size: 1.1rem; color: #ff4757; font-weight: 700; margin-bottom: 15px; }
+        .product-btn { margin-top: auto; width: 100%; border-radius: 5px; }
+
+        /* === CART MODAL === */
+        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .cart-modal { background: white; width: 90%; max-width: 500px; border-radius: 10px; padding: 20px; max-height: 90vh; overflow-y: auto; position: relative; }
+        .close-cart { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #888; }
+        .cart-modal h2 { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .cart-items { margin-bottom: 20px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #f1f1f1; }
+        .remove-btn { color: #ff4757; cursor: pointer; font-size: 14px; }
+        .cart-total { text-align: right; font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; }
+        
+        /* Checkout Form */
+        .checkout-form { display: flex; flex-direction: column; gap: 15px; }
+        .checkout-form input { padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; }
+        .checkout-form button { width: 100%; background-color: #2ed573; }
+        .checkout-form button:hover { background-color: #26b360; }
+
+        /* === WHATSAPP FLOATING BUTTON === */
+        .whatsapp-float { position: fixed; width: 60px; height: 60px; bottom: 30px; right: 30px; background-color: #25d366; color: #FFF; border-radius: 50px; text-align: center; font-size: 30px; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); z-index: 100; display: flex; justify-content: center; align-items: center; text-decoration: none; transition: transform 0.3s ease; }
+        .whatsapp-float:hover { transform: scale(1.1); }
+
+        /* Responsive Design */
+        @media (max-width: 768px) { .hero h1 { font-size: 2.2rem; } .hero p { font-size: 1rem; } .product-card { min-width: 250px; } .product-img { height: 300px; } }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header>
+        <a href="#" class="logo">YourCoverUpStory</a>
+        <div class="cart-icon-container" id="cart-icon">
+            <i class="fas fa-shopping-bag"></i>
+            <span class="cart-badge" id="cart-count">0</span>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Fresh Finds, Best Prices</h1>
+        <p>Discover your unique style with our latest arrivals.</p>
+        <a href="#products" class="btn">Shop Now</a>
+    </section>
+
+    <!-- Products Carousel Section -->
+    <section id="products">
+        <h2 class="section-title">Featured Products</h2>
+        <div class="carousel" id="product-carousel">
+            <!-- Products will be injected here via JavaScript -->
+        </div>
+    </section>
+
+    <!-- Cart & Checkout Modal -->
+    <div class="cart-overlay" id="cart-overlay">
+        <div class="cart-modal">
+            <i class="fas fa-times close-cart" id="close-cart"></i>
+            <h2>Your Shopping Cart</h2>
+            
+            <div class="cart-items" id="cart-items">
+                <!-- Cart items will appear here -->
+            </div>
+            
+            <div class="cart-total" id="cart-total">
+                Total: ₹0
+            </div>
+
+            <form class="checkout-form" id="order-form">
+                <input type="text" id="customer_name" placeholder="Full Name" required>
+                <input type="tel" id="customer_phone" placeholder="Phone Number" required>
+                <button type="submit" class="btn" id="submit-btn">Send Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/9999999999" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // =========================================================================
+        // YOUR EMAILJS KEYS ARE NOW FULLY CONFIGURED
+        // =========================================================================
+        
+        const EMAILJS_PUBLIC_KEY = "CyhhOXiY2P0zEUOKg"; 
+        const EMAILJS_SERVICE_ID = "service_b4cy40g";
+        const EMAILJS_TEMPLATE_ID = "template_esupzd1"; 
+        
+        // =========================================================================
+
+        // Initialize EmailJS
+        (function() {
+            emailjs.init(EMAILJS_PUBLIC_KEY);
+        })();
+
+        // --- 1. Product Data ---
+        const products = [
+            { id: 1, name: "Elegant Cover Up - Style 1", price: 1299, image: "https://i.ibb.co/jPMsfs93/Screenshot-20260730-020444.jpg" },
+            { id: 2, name: "Chic Cover Up - Style 2", price: 1499, image: "https://i.ibb.co/wrSKTMZX/Screenshot-20260730-020513.jpg" },
+            { id: 3, name: "Premium Cover Up - Style 3", price: 1699, image: "https://i.ibb.co/KcNHG10K/Screenshot-20260730-020534.jpg" }
+        ];
+
+        // --- 2. Cart State ---
+        let cart = [];
+
+        // --- 3. DOM Elements ---
+        const carousel = document.getElementById('product-carousel');
+        const cartIcon = document.getElementById('cart-icon');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const closeCartBtn = document.getElementById('close-cart');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotalEl = document.getElementById('cart-total');
+        const cartCountEl = document.getElementById('cart-count');
+        const orderForm = document.getElementById('order-form');
+        const submitBtn = document.getElementById('submit-btn');
+
+        // --- 4. Render Products ---
+        function renderProducts() {
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" class="product-img">
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <div class="product-price">₹${product.price}</div>
+                        <button class="btn product-btn" onclick="addToCart(${product.id})">Add to Cart</button>
+                    </div>
+                `;
+                carousel.appendChild(card);
+            });
+        }
+
+        // --- 5. Cart Functions ---
+        window.addToCart = function(productId) {
+            const product = products.find(p => p.id === productId);
+            cart.push(product);
+            updateCartUI();
+            
+            cartIcon.style.transform = "scale(1.2)";
+            setTimeout(() => cartIcon.style.transform = "scale(1)", 200);
+            alert(`${product.name} added to cart!`);
+        }
+
+        window.removeFromCart = function(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            cartCountEl.textContent = cart.length;
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+
+            if(cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p style="text-align:center; color:#888;">Your cart is empty.</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    total += item.price;
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'cart-item';
+                    itemEl.innerHTML = `
+                        <div>
+                            <strong>${item.name}</strong><br>
+                            <small>₹${item.price}</small>
+                        </div>
+                        <span class="remove-btn" onclick="removeFromCart(${index})"><i class="fas fa-trash"></i></span>
+                    `;
+                    cartItemsContainer.appendChild(itemEl);
+                });
+            }
+            cartTotalEl.textContent = `Total: ₹${total}`;
+        }
+
+        // --- 6. Modal Toggle ---
+        cartIcon.addEventListener('click', () => cartOverlay.style.display = 'flex');
+        closeCartBtn.addEventListener('click', () => cartOverlay.style.display = 'none');
+        window.addEventListener('click', (e) => {
+            if(e.target === cartOverlay) cartOverlay.style.display = 'none';
+        });
+
+        // --- 7. Handle Order Submission (EmailJS) ---
+        orderForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if(cart.length === 0) {
+                alert("Please add items to your cart before ordering.");
+                return;
+            }
+
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+
+            let orderList = cart.map(item => `- ${item.name} (₹${item.price})`).join('\n');
+            let grandTotal = cart.reduce((sum, item) => sum + item.price, 0);
+            const name = document.getElementById('customer_name').value;
+            const phone = document.getElementById('customer_phone').value;
+
+            const templateParams = {
+                to_email: 'animesf000@gmail.com', 
+                customer_name: name,
+                customer_phone: phone,
+                order_details: orderList,
+                total_price: `₹${grandTotal}`
+            };
+
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+                .then(function(response) {
+                    alert('Order Sent Successfully! We will contact you soon.');
+                    cart = []; 
+                    updateCartUI();
+                    orderForm.reset();
+                    cartOverlay.style.display = 'none';
+                    submitBtn.textContent = 'Send Order';
+                    submitBtn.disabled = false;
+                }, function(error) {
+                    alert('Failed to send order. Please try again or contact via WhatsApp.');
+                    console.log('FAILED...', error);
+                    submitBtn.textContent = 'Send Order';
+                    submitBtn.disabled = false;
+                });
+        });
+
+        // Initialize Page
+        renderProducts();
+        updateCartUI();
+    </script>
+</body>
+</html>
