@@ -56,10 +56,6 @@
         .product-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; color: #111; }
         .product-price { font-size: 1.2rem; color: #ff4757; font-weight: 700; margin-bottom: 15px; }
         
-        /* Model Selector Dropdown */
-        .model-selector { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 0.9rem; font-family: 'Poppins', sans-serif; outline: none; background-color: #f9f9f9; cursor: pointer; }
-        .model-selector:focus { border-color: #111; }
-        
         .product-btn { margin-top: auto; width: 100%; border-radius: 5px; background-color: #111; }
         .product-btn:hover { background-color: #ff4757; }
 
@@ -72,7 +68,6 @@
         .cart-items { margin-bottom: 20px; }
         .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f1f1f1; }
         .item-details strong { display: block; font-size: 1rem; color: #111; }
-        .item-details .item-model { font-size: 0.8rem; color: #666; background: #f0f0f0; padding: 2px 6px; border-radius: 3px; margin: 4px 0; display: inline-block; }
         .item-details .item-price { font-size: 0.95rem; font-weight: 600; color: #ff4757; }
         .remove-btn { color: #ff4757; cursor: pointer; font-size: 16px; padding: 5px; }
         .cart-total { text-align: right; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; color: #111; }
@@ -90,8 +85,8 @@
         .footer-brand { font-size: 1.5rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 15px; }
         .footer-text { font-size: 0.9rem; color: #aaa; margin-bottom: 20px; }
         .social-icons { margin-bottom: 20px; }
-        .social-icons i { font-size: 1.5rem; color: #fff; margin: 0 10px; cursor: pointer; transition: color 0.3s; }
-        .social-icons i:hover { color: #ff4757; }
+        .social-icons a { color: inherit; text-decoration: none; margin: 0 10px; font-size: 1.5rem; transition: color 0.3s; }
+        .social-icons a:hover { color: #ff4757; }
         .copyright { font-size: 0.8rem; color: #666; border-top: 1px solid #333; padding-top: 20px; }
 
         /* === WHATSAPP FLOATING BUTTON === */
@@ -161,18 +156,10 @@
     <footer>
         <div class="footer-brand">YourCoverUpStory</div>
         <p class="footer-text">Protecting your device, elevating your style.</p>
-        <<div class="social-icons">
-    <!-- Instagram Link -->
-    <a href="https://www.instagram.com/yourcover.upstory?igsh=MWw3amtncjRhemdidQ==" target="_blank" style="color: inherit; text-decoration: none;">
-        <i class="fab fa-instagram"></i>
-    </a>
-    
-    <!-- Facebook Link -->
-    <a href="https://www.instagram.com/yourcover.upstory?igsh=MWw3amtncjRhemdidQ==" target="_blank" style="color: inherit; text-decoration: none;">
-        <i class="fab fa-facebook"></i>
-    </a>
-</div>
-
+        <div class="social-icons">
+            <a href="https://www.instagram.com/yourcoverupstory" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.facebook.com/yourcoverupstory" target="_blank"><i class="fab fa-facebook"></i></a>
+        </div>
         <div class="copyright">
             &copy; 2026 YourCoverUpStory. All rights reserved.
         </div>
@@ -222,7 +209,7 @@
             emailjs.init(EMAILJS_PUBLIC_KEY);
         })();
 
-        // --- 1. Product Data (UPDATED WITH YOUR PRODUCTS) ---
+        // --- 1. Product Data ---
         const products = [
             { 
                 id: 1, 
@@ -255,7 +242,7 @@
                 image: "https://i.ibb.co/chNm54C5/Screenshot-20260730-151515.jpg" 
             }
         ];
-        
+
         // --- 2. Cart State ---
         let cart = [];
 
@@ -270,14 +257,8 @@
         const orderForm = document.getElementById('order-form');
         const submitBtn = document.getElementById('submit-btn');
 
-        // --- 4. Render Products (With Dropdown) ---
+        // --- 4. Render Products ---
         function renderProducts() {
-            // Generate options for dropdown
-            let modelOptions = `<option value="" disabled selected>-- Select Phone Model --</option>`;
-            phoneModels.forEach(model => {
-                modelOptions += `<option value="${model}">${model}</option>`;
-            });
-
             products.forEach(product => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
@@ -286,12 +267,6 @@
                     <div class="product-info">
                         <h3 class="product-title">${product.name}</h3>
                         <div class="product-price">₹${product.price}</div>
-                        
-                        <!-- Premium Feature: Phone Model Dropdown -->
-                        <select class="model-selector" id="model-${product.id}">
-                            ${modelOptions}
-                        </select>
-                        
                         <button class="btn product-btn" onclick="addToCart(${product.id})">Add to Cart</button>
                     </div>
                 `;
@@ -301,33 +276,13 @@
 
         // --- 5. Cart Functions ---
         window.addToCart = function(productId) {
-            // Get selected phone model
-            const modelDropdown = document.getElementById(`model-${productId}`);
-            const selectedModel = modelDropdown.value;
-
-            // Check if user selected a model
-            if(!selectedModel) {
-                alert("Please select your Phone Model first!");
-                modelDropdown.style.borderColor = "#ff4757"; // Highlight error in red
-                setTimeout(() => modelDropdown.style.borderColor = "#ddd", 2000);
-                return;
-            }
-
-            // Find product and save it with the chosen model
             const product = products.find(p => p.id === productId);
-            const cartItem = { 
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                model: selectedModel // Storing the model
-            };
-            
-            cart.push(cartItem);
+            cart.push(product);
             updateCartUI();
             
             cartIcon.style.transform = "scale(1.3)";
             setTimeout(() => cartIcon.style.transform = "scale(1)", 200);
-            alert(`Added ${product.name} for ${selectedModel} to cart!`);
+            alert(`Added ${product.name} to cart!`);
         }
 
         window.removeFromCart = function(index) {
@@ -350,7 +305,6 @@
                     itemEl.innerHTML = `
                         <div class="item-details">
                             <strong>${item.name}</strong>
-                            <span class="item-model">Model: ${item.model}</span><br>
                             <span class="item-price">₹${item.price}</span>
                         </div>
                         <span class="remove-btn" onclick="removeFromCart(${index})"><i class="fas fa-trash"></i></span>
@@ -364,7 +318,7 @@
         // --- 6. Modal Toggle ---
         cartIcon.addEventListener('click', () => {
             cartOverlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // stop background scrolling
+            document.body.style.overflow = 'hidden';
         });
         closeCartBtn.addEventListener('click', () => {
             cartOverlay.style.display = 'none';
@@ -389,14 +343,12 @@
             submitBtn.textContent = 'Sending...';
             submitBtn.disabled = true;
 
-            // Prepare Order Text (Now includes Phone Model!)
-            let orderList = cart.map(item => `- ${item.name} [Phone: ${item.model}] (₹${item.price})`).join('\n');
+            let orderList = cart.map(item => `- ${item.name} (₹${item.price})`).join('\n');
             let grandTotal = cart.reduce((sum, item) => sum + item.price, 0);
             
             const name = document.getElementById('customer_name').value;
             const phone = document.getElementById('customer_phone').value;
 
-            // Mapping variables to send to EmailJS Template
             const templateParams = {
                 customer_name: name,
                 customer_phone: phone,
@@ -404,7 +356,6 @@
                 total_price: `₹${grandTotal}`
             };
 
-            // Send via EmailJS
             emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
                 .then(function(response) {
                     alert('Order Sent Successfully! We will contact you on WhatsApp soon.');
