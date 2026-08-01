@@ -11,9 +11,6 @@
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- EmailJS CDN -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-
     <style>
         /* === CSS RESET & BASE STYLES === */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
@@ -66,19 +63,26 @@
         .close-cart:hover { color: #ff4757; }
         .cart-modal h2 { margin-bottom: 20px; border-bottom: 2px solid #f1f1f1; padding-bottom: 10px; font-size: 1.5rem; }
         .cart-items { margin-bottom: 20px; }
+        
+        /* Updated Cart Item Layout with Image */
         .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f1f1f1; }
-        .item-details strong { display: block; font-size: 1rem; color: #111; }
+        .cart-item-info { display: flex; align-items: center; gap: 12px; }
+        .cart-item-img { width: 55px; height: 55px; object-fit: cover; border-radius: 6px; border: 1px solid #eee; }
+        .item-details strong { display: block; font-size: 0.95rem; color: #111; }
         .item-details .item-price { font-size: 0.95rem; font-weight: 600; color: #ff4757; }
+        
         .remove-btn { color: #ff4757; cursor: pointer; font-size: 16px; padding: 5px; }
         .cart-total { text-align: right; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; color: #111; }
         
         /* Checkout Form */
-        .checkout-form { display: flex; flex-direction: column; gap: 15px; }
-        .checkout-form input { padding: 12px 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; outline: none; }
-        .checkout-form input:focus { border-color: #111; }
-        .checkout-form button { width: 100%; background-color: #2ed573; color: white; font-weight: 600; padding: 14px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.05rem; letter-spacing: 0.5px; }
-        .checkout-form button:hover { background-color: #26b360; }
-        .checkout-form button:disabled { background-color: #888; cursor: not-allowed; }
+        .checkout-form { display: flex; flex-direction: column; gap: 12px; }
+        .checkout-form input, .checkout-form textarea { padding: 12px 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; outline: none; font-family: 'Poppins', sans-serif; resize: none; }
+        .checkout-form input:focus, .checkout-form textarea:focus { border-color: #111; }
+        .checkout-form button { width: 100%; background-color: #25d366; color: white; font-weight: 600; padding: 14px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.05rem; letter-spacing: 0.5px; transition: background 0.3s; }
+        .checkout-form button:hover { background-color: #20ba5a; }
+
+        /* Error Text for Validation */
+        .error-message { color: #ff4757; font-size: 0.85rem; font-weight: 500; display: none; text-align: center; }
 
         /* === FOOTER === */
         footer { background-color: #111; color: #fff; padding: 40px 5%; text-align: center; margin-top: 40px; }
@@ -89,12 +93,32 @@
         .social-icons a:hover { color: #ff4757; }
         .copyright { font-size: 0.8rem; color: #666; border-top: 1px solid #333; padding-top: 20px; }
 
-        /* === WHATSAPP FLOATING BUTTON === */
-        .whatsapp-float { position: fixed; width: 60px; height: 60px; bottom: 30px; right: 30px; background-color: #25d366; color: #FFF; border-radius: 50px; text-align: center; font-size: 30px; box-shadow: 2px 2px 15px rgba(0,0,0,0.2); z-index: 100; display: flex; justify-content: center; align-items: center; text-decoration: none; transition: transform 0.3s ease; }
-        .whatsapp-float:hover { transform: scale(1.1); }
+        /* === AI CHATBOT SYSTEM === */
+        .chat-float { position: fixed; width: 60px; height: 60px; bottom: 30px; right: 30px; background-color: #111; color: #FFF; border-radius: 50px; text-align: center; font-size: 26px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 100; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s ease; }
+        .chat-float:hover { transform: scale(1.1); background-color: #ff4757; }
+        
+        .chat-window { position: fixed; bottom: 100px; right: 30px; width: 340px; height: 450px; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.25); z-index: 1000; display: none; flex-direction: column; overflow: hidden; border: 1px solid #eee; }
+        .chat-header { background: #111; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 1.05rem; }
+        .chat-header i.fa-robot { margin-right: 8px; font-size: 1.2rem; }
+        
+        .chat-body { flex: 1; padding: 15px; overflow-y: auto; background-color: #f9f9f9; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
+        .bot-message, .user-message { max-width: 85%; padding: 12px 16px; border-radius: 15px; font-size: 0.9rem; line-height: 1.4; word-wrap: break-word; }
+        .bot-message { background: #e9ecef; color: #111; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .user-message { background: #111; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        
+        .chat-input-area { display: flex; border-top: 1px solid #eee; padding: 12px; background: white; align-items: center; }
+        .chat-input-area input { flex: 1; border: 1px solid #ddd; padding: 10px 15px; border-radius: 25px; outline: none; font-family: 'Poppins', sans-serif; font-size: 0.9rem; }
+        .chat-input-area input:focus { border-color: #111; }
+        .chat-input-area button { background: #111; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: 8px; cursor: pointer; transition: background 0.3s; }
+        .chat-input-area button:hover { background: #ff4757; }
 
         /* Responsive Design */
-        @media (max-width: 768px) { .hero h1 { font-size: 2.2rem; } .hero p { font-size: 1rem; } .product-card { min-width: 260px; } .product-img { height: 300px; } .trust-item { width: 45%; } }
+        @media (max-width: 768px) { 
+            .hero h1 { font-size: 2.2rem; } .hero p { font-size: 1rem; } .product-card { min-width: 260px; } .product-img { height: 300px; } .trust-item { width: 45%; } 
+            /* Full screen chat on mobile */
+            .chat-window { bottom: 0; right: 0; width: 100%; height: 100%; border-radius: 0; z-index: 9999; }
+            .chat-float { bottom: 20px; right: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -179,68 +203,50 @@
                 Total: ₹0
             </div>
 
+            <!-- Validation Error Message -->
+            <div class="error-message" id="form-error">Please provide valid details (No fake details allowed).</div>
+
             <form class="checkout-form" id="order-form">
-                <input type="text" id="customer_name" placeholder="Full Name" required>
-                <input type="tel" id="customer_phone" placeholder="Phone Number" required>
-                <button type="submit" id="submit-btn">Send Order via Email</button>
+                <!-- STRICT VALIDATION ADDED HERE -->
+                <input type="text" id="customer_name" placeholder="Full Name *" minlength="3" required title="Please enter a valid full name">
+                <input type="tel" id="customer_phone" placeholder="Phone Number (10 Digits) *" pattern="[0-9]{10}" maxlength="10" required title="Please enter exactly 10 digits">
+                <textarea id="customer_address" placeholder="Delivery Address (Compulsory) *" rows="3" minlength="15" required title="Please provide a complete address"></textarea>
+                
+                <!-- Order submission goes to WhatsApp -->
+                <button type="submit" id="submit-btn"><i class="fab fa-whatsapp"></i> Send Order via WhatsApp</button>
             </form>
         </div>
     </div>
 
-    <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/917045499765" class="whatsapp-float" target="_blank">
-        <i class="fab fa-whatsapp"></i>
-    </a>
+    <!-- AI CHATBOT FLOATING BUTTON -->
+    <div class="chat-float" id="open-chat">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <!-- AI CHATBOT WINDOW -->
+    <div class="chat-window" id="chat-window">
+        <div class="chat-header">
+            <span><i class="fas fa-robot"></i> Support Bot</span>
+            <i class="fas fa-times" id="close-chat" style="cursor:pointer; padding:5px;"></i>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="bot-message">Hello! I am your AI assistant. How can I help you today?</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Type your question here...">
+            <button id="send-chat"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
 
     <!-- JavaScript Logic -->
     <script>
-        // =========================================================================
-        // AAPKI EMAILJS KEYS
-        // =========================================================================
-        
-        const EMAILJS_PUBLIC_KEY = "CyhhOXiY2P0zEUOKg"; 
-        const EMAILJS_SERVICE_ID = "service_b4cy40g";
-        const EMAILJS_TEMPLATE_ID = "template_esupzd1"; 
-        
-        // =========================================================================
-
-        // Initialize EmailJS
-        (function() {
-            emailjs.init(EMAILJS_PUBLIC_KEY);
-        })();
-
         // --- 1. Product Data ---
         const products = [
-            { 
-                id: 1, 
-                name: "Photo Insert Cover", 
-                price: 199, 
-                image: "https://i.ibb.co/gb3MnKJ0/IMG-20260801-005550-300.jpg" 
-            },
-            { 
-                id: 2, 
-                name: "Premium Glass Metal Armor", 
-                price: 349, 
-                image: "https://i.ibb.co/vCXsxkST/IMG-20260801-012151.png" 
-            },
-            { 
-                id: 3, 
-                name: "Hard Case (Direct-print)", 
-                price: 249, 
-                image: "https://i.ibb.co/DgKDX0Mh/IMG-20260801-012135.png" 
-            },
-            { 
-                id: 4, 
-                name: "Silicon Case", 
-                price: 349, 
-                image: "https://i.ibb.co/5WPM2R2y/Screenshot-20260801-010851.jpg" 
-            },
-            { 
-                id: 5, 
-                name: "Floral Cover Up", 
-                price: 349, 
-                image: "https://i.ibb.co/chNm54C5/Screenshot-20260730-151515.jpg" 
-            }
+            { id: 1, name: "Photo Insert Cover", price: 199, image: "https://i.ibb.co/gb3MnKJ0/IMG-20260801-005550-300.jpg" },
+            { id: 2, name: "Premium Glass Metal Armor", price: 349, image: "https://i.ibb.co/vCXsxkST/IMG-20260801-012151.png" },
+            { id: 3, name: "Hard Case (Direct-print)", price: 249, image: "https://i.ibb.co/DgKDX0Mh/IMG-20260801-012135.png" },
+            { id: 4, name: "Silicon Case", price: 349, image: "https://i.ibb.co/5WPM2R2y/Screenshot-20260801-010851.jpg" },
+            { id: 5, name: "Floral Cover Up", price: 349, image: "https://i.ibb.co/chNm54C5/Screenshot-20260730-151515.jpg" }
         ];
 
         // --- 2. Cart State ---
@@ -255,7 +261,7 @@
         const cartTotalEl = document.getElementById('cart-total');
         const cartCountEl = document.getElementById('cart-count');
         const orderForm = document.getElementById('order-form');
-        const submitBtn = document.getElementById('submit-btn');
+        const errorMsg = document.getElementById('form-error');
 
         // --- 4. Render Products ---
         function renderProducts() {
@@ -290,6 +296,7 @@
             updateCartUI();
         }
 
+        // --- UPDATED UI FUNCTION (WITH IMAGE IN CART) ---
         function updateCartUI() {
             cartCountEl.textContent = cart.length;
             cartItemsContainer.innerHTML = '';
@@ -303,9 +310,12 @@
                     const itemEl = document.createElement('div');
                     itemEl.className = 'cart-item';
                     itemEl.innerHTML = `
-                        <div class="item-details">
-                            <strong>${item.name}</strong>
-                            <span class="item-price">₹${item.price}</span>
+                        <div class="cart-item-info">
+                            <img src="${item.image}" alt="${item.name}" class="cart-item-img">
+                            <div class="item-details">
+                                <strong>${item.name}</strong>
+                                <span class="item-price">₹${item.price}</span>
+                            </div>
                         </div>
                         <span class="remove-btn" onclick="removeFromCart(${index})"><i class="fas fa-trash"></i></span>
                     `;
@@ -319,6 +329,7 @@
         cartIcon.addEventListener('click', () => {
             cartOverlay.style.display = 'flex';
             document.body.style.overflow = 'hidden';
+            errorMsg.style.display = 'none'; 
         });
         closeCartBtn.addEventListener('click', () => {
             cartOverlay.style.display = 'none';
@@ -331,7 +342,7 @@
             }
         });
 
-        // --- 7. Handle Order Submission (EmailJS) ---
+     // --- 7. Handle Order Submission (Direct to WhatsApp) ---
         orderForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -340,39 +351,117 @@
                 return;
             }
 
-            submitBtn.textContent = 'Sending...';
-            submitBtn.disabled = true;
+            const name = document.getElementById('customer_name').value.trim();
+            const phone = document.getElementById('customer_phone').value.trim();
+            const address = document.getElementById('customer_address').value.trim();
 
-            let orderList = cart.map(item => `- ${item.name} (₹${item.price})`).join('\n');
+            if(name.length < 3 || phone.length !== 10 || address.length < 10) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            errorMsg.style.display = 'none';
+
+            let orderList = cart.map(item => `• ${item.name} - ₹${item.price}`).join('%0A');
             let grandTotal = cart.reduce((sum, item) => sum + item.price, 0);
-            
-            const name = document.getElementById('customer_name').value;
-            const phone = document.getElementById('customer_phone').value;
 
-            const templateParams = {
-                customer_name: name,
-                customer_phone: phone,
-                order_details: orderList,
-                total_price: `₹${grandTotal}`
-            };
+            let whatsappMessage = `🛍️ *New Order - YourCoverUpStory*%0A%0A` +
+                                  `👤 *Customer Name:* ${name}%0A` +
+                                  `📞 *Phone Number:* ${phone}%0A` +
+                                  `📍 *Delivery Address:* ${address}%0A%0A` +
+                                  `📦 *Order Items:*%0A${orderList}%0A%0A` +
+                                  `💰 *Total Amount:* ₹${grandTotal}%0A%0A` +
+                                  `_Please confirm my order!_`;
 
-            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
-                .then(function(response) {
-                    alert('Order Sent Successfully! We will contact you on WhatsApp soon.');
-                    cart = []; 
-                    updateCartUI();
-                    orderForm.reset();
-                    cartOverlay.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                    submitBtn.textContent = 'Send Order via Email';
-                    submitBtn.disabled = false;
-                }, function(error) {
-                    alert('Failed to send order. Please try again or contact via WhatsApp.');
-                    console.log('FAILED...', error);
-                    submitBtn.textContent = 'Send Order via Email';
-                    submitBtn.disabled = false;
-                });
+            let ownerPhoneNumber = "917045499765";
+            let whatsappUrl = `https://wa.me/${ownerPhoneNumber}?text=${whatsappMessage}`;
+            window.open(whatsappUrl, '_blank');
+
+            cart = [];
+            updateCartUI();
+            orderForm.reset();
+            cartOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
         });
+
+        // --- 8. AI Chatbot Logic ---
+        const openChatBtn = document.getElementById('open-chat');
+        const closeChatBtn = document.getElementById('close-chat');
+        const chatWindow = document.getElementById('chat-window');
+        const chatInput = document.getElementById('chat-input');
+        const sendChatBtn = document.getElementById('send-chat');
+        const chatBody = document.getElementById('chat-body');
+
+        // Open Chat
+        openChatBtn.addEventListener('click', () => {
+            chatWindow.style.display = 'flex';
+            openChatBtn.style.transform = 'scale(0)';
+            setTimeout(() => openChatBtn.style.display = 'none', 300);
+        });
+
+        // Close Chat
+        closeChatBtn.addEventListener('click', () => {
+            chatWindow.style.display = 'none';
+            openChatBtn.style.display = 'flex';
+            setTimeout(() => openChatBtn.style.transform = 'scale(1)', 10);
+        });
+
+        // Handle sending messages
+        function sendChatMessage() {
+            const userText = chatInput.value.trim();
+            if(!userText) return;
+
+            // Append User Message
+            appendMessage('user', userText);
+            chatInput.value = '';
+
+            // Simulate AI Thinking (delay of 600ms)
+            setTimeout(() => {
+                const botResponse = getBotResponse(userText.toLowerCase());
+                appendMessage('bot', botResponse);
+            }, 600);
+        }
+
+        // Send via button click or Enter key
+        sendChatBtn.addEventListener('click', sendChatMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') sendChatMessage();
+        });
+
+        // Append message to UI
+        function appendMessage(sender, text) {
+            const msgEl = document.createElement('div');
+            msgEl.className = sender === 'user' ? 'user-message' : 'bot-message';
+            msgEl.textContent = text;
+            chatBody.appendChild(msgEl);
+            chatBody.scrollTop = chatBody.scrollHeight; // Auto scroll to bottom
+        }
+
+        // Rule-Based AI Logic
+        function getBotResponse(input) {
+            if(input.includes('price') || input.includes('cost') || input.includes('rupees')) {
+                return "Our premium phone covers start from just ₹199! You can browse the catalog above to see specific prices.";
+            }
+            if(input.includes('shipping') || input.includes('delivery') || input.includes('days')) {
+                return "Great news! We offer FREE shipping on all orders above ₹499. Standard delivery takes around 3-5 business days across India.";
+            }
+            if(input.includes('model') || input.includes('phone') || input.includes('brand')) {
+                return "We provide covers for almost all major brands including iPhone, Samsung, OnePlus, and more! Add items to cart to proceed.";
+            }
+            if(input.includes('return') || input.includes('refund') || input.includes('damaged')) {
+                return "Customer satisfaction is our priority. If you receive a damaged product, please DM us an unboxing video on our Instagram page @yourcover.upstory for a replacement.";
+            }
+            if(input.includes('hello') || input.includes('hi') || input.includes('hey')) {
+                return "Hello there! Welcome to YourCoverUpStory. I am your automated assistant. How can I help you style your phone today?";
+            }
+            if(input.includes('instagram') || input.includes('insta') || input.includes('id') || input.includes('contact')) {
+                return "You can reach out to us directly on Instagram for any queries! Our Instagram ID is @yourcover.upstory. Just send us a DM there.";
+            }
+            if(input === 'ok' || input === 'okay' || input === 'k' || input.includes('thank')) {
+                return "You're welcome! Let me know if you need anything else, or feel free to DM us on Instagram @yourcover.upstory.";
+            }
+            
+            return "I am still learning and might not have the answer to that yet! For any specific queries, feel free to DM us on our Instagram page: @yourcover.upstory";
+        }
 
         // Initialize Page
         renderProducts();
