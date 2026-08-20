@@ -90,8 +90,8 @@
         .checkout-form { display: flex; flex-direction: column; gap: 12px; }
         .checkout-form input, .checkout-form textarea { padding: 12px 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; outline: none; font-family: 'Poppins', sans-serif; resize: none; }
         .checkout-form input:focus, .checkout-form textarea:focus { border-color: #111; }
-        .checkout-form button { width: 100%; background-color: #25d366; color: white; font-weight: 600; padding: 14px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.05rem; letter-spacing: 0.5px; transition: background 0.3s; }
-        .checkout-form button:hover { background-color: #20ba5a; }
+        .checkout-form button { width: 100%; background-color: #833ab4; color: white; font-weight: 600; padding: 14px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.05rem; letter-spacing: 0.5px; transition: background 0.3s; }
+        .checkout-form button:hover { background-color: #6a2d91; }
 
         .error-message { color: #ff4757; font-size: 0.85rem; font-weight: 500; display: none; text-align: center; margin-bottom: 10px; }
 
@@ -243,7 +243,7 @@
                 <input type="tel" id="customer_phone" placeholder="Phone Number (10 Digits) *" pattern="[0-9]{10}" maxlength="10" required title="Please enter exactly 10 digits">
                 <textarea id="customer_address" placeholder="Delivery Address (Compulsory) *" rows="3" minlength="15" required title="Please provide a complete address"></textarea>
                 
-                <button type="submit" id="submit-btn"><i class="fab fa-whatsapp"></i> Send Order via WhatsApp</button>
+                <button type="submit" id="submit-btn"><i class="fab fa-instagram"></i> Send Order via Instagram DM</button>
             </form>
         </div>
     </div>
@@ -270,48 +270,16 @@
 
     <!-- JavaScript Logic -->
     <script>
-        // --- 1. Product Data ---
         const products = [
-            { 
-                id: 1, 
-                name: "Photo Insert Cover", 
-                price: 199, 
-                image: "https://i.ibb.co/gb3MnKJ0/IMG-20260801-005550-300.jpg",
-                allowUpload: true 
-            },
-            { 
-                id: 2, 
-                name: "Premium Glass Metal Armor", 
-                price: 349, 
-                image: "https://i.ibb.co/vCXsxkST/IMG-20260801-012151.png",
-                allowUpload: true 
-            },
-            { 
-                id: 3, 
-                name: "Hard Case (Direct-print)", 
-                price: 249, 
-                image: "https://i.ibb.co/DgKDX0Mh/IMG-20260801-012135.png",
-                allowUpload: true 
-            },
-            { 
-                id: 4, 
-                name: "Silicon Case", 
-                price: 349, 
-                image: "https://i.ibb.co/5WPM2R2y/Screenshot-20260801-010851.jpg",
-                allowUpload: true 
-            },
-            { 
-                id: 5, 
-                name: "Floral Cover Up", 
-                price: 349, 
-                image: "https://i.ibb.co/chNm54C5/Screenshot-20260730-151515.jpg",
-                allowUpload: true 
-            }
+            { id: 1, name: "Photo Insert Cover", price: 199, image: "https://i.ibb.co/gb3MnKJ0/IMG-20260801-005550-300.jpg", allowUpload: true },
+            { id: 2, name: "Premium Glass Metal Armor", price: 349, image: "https://i.ibb.co/vCXsxkST/IMG-20260801-012151.png", allowUpload: true },
+            { id: 3, name: "Hard Case (Direct-print)", price: 249, image: "https://i.ibb.co/DgKDX0Mh/IMG-20260801-012135.png", allowUpload: true },
+            { id: 4, name: "Silicon Case", price: 349, image: "https://i.ibb.co/5WPM2R2y/Screenshot-20260801-010851.jpg", allowUpload: true },
+            { id: 5, name: "Floral Cover Up", price: 349, image: "https://i.ibb.co/chNm54C5/Screenshot-20260730-151515.jpg", allowUpload: true }
         ];
 
         let cart = [];
 
-        // --- DOM Elements ---
         const carousel = document.getElementById('product-carousel');
         const cartIcon = document.getElementById('cart-icon');
         const cartOverlay = document.getElementById('cart-overlay');
@@ -322,21 +290,16 @@
         const orderForm = document.getElementById('order-form');
         const errorMsg = document.getElementById('form-error');
 
-        // --- Render Products ---
         function renderProducts() {
             products.forEach(product => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
-
-                let uploadHTML = '';
-                if (product.allowUpload) {
-                    uploadHTML = `
-                        <div class="upload-section">
-                            <label><i class="fas fa-image"></i> Personal Photo (Optional)</label>
-                            <input type="file" id="file-${product.id}" accept="image/*">
-                        </div>
-                    `;
-                }
+                let uploadHTML = product.allowUpload ? `
+                    <div class="upload-section">
+                        <label><i class="fas fa-image"></i> Personal Photo (Optional)</label>
+                        <input type="file" id="file-${product.id}" accept="image/*">
+                    </div>
+                ` : '';
 
                 card.innerHTML = `
                     <img src="${product.image}" alt="${product.name}" class="product-img">
@@ -351,22 +314,18 @@
             });
         }
 
-        // --- Add to Cart Handler ---
         window.addToCartHandler = function(productId) {
             const product = products.find(p => p.id === productId);
             let cartItem = { ...product };
-
             const fileInput = document.getElementById(`file-${productId}`);
             
             if (fileInput && fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 const reader = new FileReader();
-                
                 reader.onload = function(e) {
                     cartItem.customImage = e.target.result;
                     cartItem.name = cartItem.name + " (Custom Photo)";
                     cartItem.hasCustomUpload = true;
-                    
                     cart.push(cartItem);
                     finalizeAddToCart(cartItem);
                     fileInput.value = '';
@@ -401,7 +360,6 @@
                 cart.forEach((item, index) => {
                     grandTotal += item.price;
                     let displayImage = item.customImage ? item.customImage : item.image;
-
                     const itemEl = document.createElement('div');
                     itemEl.className = 'cart-item';
                     itemEl.innerHTML = `
@@ -420,7 +378,6 @@
             cartTotalEl.textContent = `Total: ₹${grandTotal}`;
         }
 
-        // --- Cart Modal Toggle ---
         cartIcon.addEventListener('click', () => {
             cartOverlay.style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -437,7 +394,7 @@
             }
         });
 
-        // --- Handle Order Submission ---
+        // --- Handle Order Submission via Instagram DM ---
         orderForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -456,27 +413,46 @@
             }
             errorMsg.style.display = 'none';
 
+            // GENERATE A RANDOM ORDER ID FOR EASY TRACKING
+            let orderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+
             let orderList = cart.map(item => {
                 let itemTxt = `• ${item.name} - ₹${item.price}`;
                 if(item.hasCustomUpload) {
-                    itemTxt += `%0A  👉 _"Ye mera custom photo design product hai. Main iski photo bhej raha hu."_`;
+                    itemTxt += `\n  👉 "Ye mera custom photo design product hai. Main iski photo bhej raha hu."`;
                 }
                 return itemTxt;
-            }).join('%0A%0A');
+            }).join('\n\n');
 
             let grandTotal = cart.reduce((sum, item) => sum + item.price, 0);
 
-            let whatsappMessage = `🛍️ *New Order - YourCoverUpStory*%0A%0A` +
-                                  `👤 *Customer Name:* ${name}%0A` +
-                                  `📞 *Phone Number:* ${phone}%0A` +
-                                  `📍 *Delivery Address:* ${address}%0A%0A` +
-                                  `📦 *Order Items:*%0A${orderList}%0A%0A` +
-                                  `💰 *Total Amount:* ₹${grandTotal}%0A%0A` +
-                                  `_Please confirm my order!_`;
+            let dmMessage = `🛍️ New Order - YourCoverUpStory\n` +
+                            `🆔 Order ID: ${orderId}\n\n` +
+                            `👤 Customer Name: ${name}\n` +
+                            `📞 Phone Number: ${phone}\n` +
+                            `📍 Delivery Address: ${address}\n\n` +
+                            `📦 Order Items:\n${orderList}\n\n` +
+                            `💰 Total Amount: ₹${grandTotal}\n\n` +
+                            `Please confirm my order!`;
 
-            let ownerPhoneNumber = "917045499765";
-            let whatsappUrl = `https://wa.me/${ownerPhoneNumber}?text=${whatsappMessage}`;
-            window.open(whatsappUrl, '_blank');
+            // Silently copy the text to clipboard
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = dmMessage;
+                textArea.style.position = "fixed"; // prevent scroll
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textArea);
+                
+                // Show a helpful alert to prompt them to paste the message!
+                alert("✅ Order details copied!\n\nClick OK to open our Instagram DM.\nPlease PASTE the message there to send your order.");
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+            }
+
+            // Open Instagram DIRECT MESSAGE link for specific profile
+            window.open("https://ig.me/m/yourcover.upstory", "_blank");
 
             cart = [];
             updateCartUI();
@@ -557,7 +533,6 @@
             return "I am still learning and might not have the answer to that yet! For any specific queries, feel free to DM us on our Instagram page: @yourcover.upstory";
         }
 
-        // Initialize Page
         renderProducts();
         updateCartUI();
     </script>
