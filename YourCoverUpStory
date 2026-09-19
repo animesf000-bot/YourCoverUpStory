@@ -24,6 +24,14 @@
         header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease; }
         .logo { display: flex; align-items: center; gap: 12px; font-size: 24px; font-weight: 800; color: #000; text-decoration: none; letter-spacing: -0.5px; text-transform: uppercase; }
         .brand-logo { height: 42px; width: 42px; object-fit: cover; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 2px solid #fff; }
+        
+        /* NEW NAV LINKS */
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a { text-decoration: none; color: #333; font-weight: 600; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; position: relative; transition: color 0.3s; }
+        .nav-links a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #000; transition: width 0.3s; }
+        .nav-links a:hover { color: #000; }
+        .nav-links a:hover::after { width: 100%; }
+
         .cart-icon-container { position: relative; cursor: pointer; font-size: 24px; color: #000; transition: transform 0.3s; }
         .cart-icon-container:hover { transform: scale(1.1); }
         .cart-badge { position: absolute; top: -8px; right: -10px; background-color: #e50914; color: white; border-radius: 50%; padding: 3px 7px; font-size: 11px; font-weight: bold; border: 2px solid #fff; }
@@ -122,6 +130,9 @@
         .chat-input-area button:hover { background: #333; }
 
         /* Responsive Design */
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+        }
         @media (max-width: 768px) { 
             .hero h1 { font-size: 2.5rem; } .hero p { font-size: 1rem; } 
             .cat-card { width: 100%; }
@@ -145,6 +156,15 @@
             <img src="https://i.ibb.co/3DkFCY3/Screenshot-20260919-134305.jpg" alt="Varizonest Logo" class="brand-logo">
             Varizonest
         </a>
+        
+        <!-- NAVIGATION LINKS -->
+        <nav class="nav-links">
+            <a href="#">Home</a>
+            <a href="#products">Shop</a>
+            <a href="https://ig.me/m/varizonest" target="_blank">Contact</a>
+            <a href="#" onclick="document.getElementById('open-chat').click(); return false;">Help</a>
+        </nav>
+
         <div class="cart-icon-container" id="cart-icon">
             <i class="fas fa-shopping-bag"></i>
             <span class="cart-badge" id="cart-count">0</span>
@@ -158,12 +178,12 @@
         <a href="#products" class="btn">Explore Now</a>
     </section>
 
-    <!-- Shop by Category (NEW EPIC FEATURE) -->
+    <!-- Shop by Category -->
     <section class="categories">
         <h2 class="section-title">Shop by Category</h2>
         <div class="cat-grid">
             <div class="cat-card" onclick="document.getElementById('products').scrollIntoView();">
-                <img src="https://images.unsplash.com/photo-1556910103-1c02745a872f?auto=format&fit=crop&q=80&w=800" alt="Kitchen">
+                <img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=800&q=80" alt="Kitchen">
                 <div class="cat-overlay"><h3>Smart Kitchen</h3></div>
             </div>
             <div class="cat-card" onclick="document.getElementById('products').scrollIntoView();">
@@ -271,7 +291,6 @@
 
     <!-- JavaScript Logic -->
     <script>
-        // --- UPDATED MULTI-NICHE PRODUCTS ---
         const products = [
             { 
                 id: 1, 
@@ -279,7 +298,8 @@
                 name: "12-in-1 Smart Veggie Chopper", 
                 price: 499, 
                 oldPrice: 999,
-                image: "https://images.unsplash.com/photo-1583337265887-573516630456?auto=format&fit=crop&q=80&w=800" 
+                // NEW WORKING IMAGE LINK
+                image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=800&q=80" 
             },
             { 
                 id: 2, 
@@ -354,7 +374,6 @@
             cartIcon.style.transform = "scale(1.4)";
             setTimeout(() => cartIcon.style.transform = "scale(1)", 200);
             
-            // Modern subtle notification
             let toast = document.createElement('div');
             toast.textContent = `${product.name} added!`;
             toast.style.cssText = "position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#000; color:#fff; padding:10px 20px; border-radius:30px; z-index:9999; font-weight:600; font-size:0.9rem; box-shadow:0 10px 20px rgba(0,0,0,0.2);";
